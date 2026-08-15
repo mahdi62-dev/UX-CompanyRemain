@@ -1,0 +1,32 @@
+﻿@using DevExpress.Blazor
+<div class="ltr">
+    <DxToastProvider Name="Mytoast"
+                     MaxToastCount="2"
+                     HorizontalAlignment="HorizontalAlignment.Center"
+                     VerticalAlignment="VerticalEdge.Bottom"
+                     Width="300px"
+                     ShowCloseButton="true"
+                     ThemeMode="ToastThemeMode.Light"
+                     RenderStyle="ToastRenderStyle.Success"
+                     AnimationType="ToastAnimationType.SlideAndFade"
+                     DisplayTime="@TimeSpan.FromSeconds(4)"/>
+</div>
+
+
+@code {
+
+
+    [Inject]
+    IToastNotificationService ToastService { get; set; }
+
+    public void ToastShow(string Title, string Text)
+    {
+        ToastService.ShowToast(new ToastOptions
+        {
+            ProviderName = "Mytoast",
+            Title = Title,
+            Text = Text
+        });
+    }
+
+}

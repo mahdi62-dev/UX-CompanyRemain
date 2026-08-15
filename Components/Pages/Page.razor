@@ -1,0 +1,465 @@
+﻿@page "/"
+
+@page "/Page"
+
+@rendermode InteractiveServer
+
+@using DevExpress.Blazor
+@using UX.Components.Layout
+@layout MainLayout
+
+@inject IServiceProvider ServiceProvider
+
+<div class="content-wrapper container-fluid page-body-wrapper">
+    <div class="main-panel">
+        <div class="row flex-grow pt-3">
+
+            <div class="col-lg-12 col-md-12 col-sm-12 grid-margin stretch-card">
+                <div class="card card-rounded">
+                    <div class="card-body shadow">
+
+                        <div dir="ltr" class="border-bottom mt-2">
+                            <DxToolbar ItemRenderStyleMode="ToolbarRenderStyleMode.Plain" CssClass="me-4 ms-4 ps-4 pe-4">
+                                <Items>
+                                    <DxToolbarItem BeginGroup="true" Name="Center" IconCssClass="tb-icon tb-icon-save" Tooltip="ذخیره" Click="@DoSave" />
+
+                                    <DxToolbarItem Name="Center" IconCssClass="tb-icon tb-icon-graph" Tooltip="نمودار" Click="@DoDash" />
+
+                                    <DxToolbarItem Name="DebtDistributionReport"
+                                                   IconCssClass="tb-icon tb-icon-report-list"
+                                                   Tooltip="نمایش گزارش توزیع بدهی"
+                                                   Click="@OpenDebtDistributionReport" />
+
+                                    <DxToolbarItem BeginGroup="true" IconCssClass="tb-icon tb-icon-save" Alignment="ToolbarItemAlignment.Right">
+                                        <div class="d-flex">
+                                            <h6 class="title pe-4">@_Date</h6>
+
+                                            <h6 class="title ps-4">لیست بدهی بیمارستان مسیح دانشوری به شرکت ها</h6>
+                                        </div>
+                                    </DxToolbarItem>
+
+                                    @*      <DxToolbarItem>
+                                        <h6 class="title">@_Date</h6>
+                                    </DxToolbarItem> *@
+
+                                </Items>
+                            </DxToolbar>
+                        </div>
+
+                        <div class="p-2">
+                            <DxGrid @ref="@MyGrid"
+                                    Data="_CompanyRemainList"
+                                    KeyFieldName="Rec"
+                                    EditMode="GridEditMode.EditCell"
+                                    ShowFilterRow="true"
+                                    SizeMode="SizeMode.Small"
+                                    TextWrapEnabled="false"
+                                    AllowSort="true"
+                                    CssClass="p-0 rtl company-remain-grid"
+                                    Height="calc(100vh - 185px)"
+                                    CustomizeSummaryDisplayText="Grid_CustomizeSummaryDisplayText"
+                                    PageSize="@_GridPageSize"
+                                    PageSizeSelectorItems="@(new[] { 10, 15, 20, 30, 50, 70 })"
+                                    PagerPosition="GridPagerPosition.Bottom"
+                                    PageSizeSelectorVisible="true"
+                                    PageSizeSelectorAllRowsItemVisible="true"
+                                    ShowGroupPanel="true"
+                                    ColumnCaptionAlignment="GridTextAlignment.Right"
+                                    EditModelSaving="OnEditModelSaving"
+                                    CustomizeElement="Grid_CustomizeElement"
+                                    FilterMenuButtonDisplayMode="GridFilterMenuButtonDisplayMode.Always"
+                                    EditNewRowPosition="GridEditNewRowPosition.Top"
+                                    ColumnResizeMode="GridColumnResizeMode.NextColumn">
+
+                                <ToolbarTemplate>
+                                    <DxToolbar ItemRenderStyleMode="ToolbarRenderStyleMode.Plain">
+                                        <DxToolbarItem Text="جدید" BeginGroup="true" Click="NewItem_Click" IconCssClass="grid-toolbar-new" />
+                                        <DxToolbarItem Text="انتخاب ستون" Click="ColumnChooserButton_Click" IconCssClass="grid-toolbar-column-chooser" />
+                                        <DxToolbarItem Text="خروجی" IconCssClass="grid-toolbar-export">
+                                            <Items>
+                                                <DxToolbarItem Text="To XLSX" Click="ExportXlsxItem_Click" />
+                                            </Items>
+                                        </DxToolbarItem>
+                                    </DxToolbar>
+                                </ToolbarTemplate>
+
+
+                                <Columns>
+
+                                    <DxGridDataColumn Caption="ردیف" FieldName="Rec" Width="5%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="true" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="کد ملی" FieldName="CodeMeli" Width="8%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" />
+                                    @* 
+                                    <DxGridDataColumn Caption="کد" FieldName="Code" Width="2%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn> *@
+                                    @* 
+                                    <DxGridDataColumn Caption="عنوان" FieldName="CodeName" Width="12%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <FilterRowCellTemplate>
+                                            <DxTextBox Text="@((string)context.FilterRowValue)" BindValueMode=BindValueMode.OnInput
+                                                       TextChanged="(string v) => context.FilterRowValue = v" />
+                                        </FilterRowCellTemplate>
+                                    </DxGridDataColumn> *@
+
+                                    <DxGridDataColumn FieldName="CodeName" Caption="فعالیت" Width="13%"
+                                                      FilterMode="GridColumnFilterMode.DisplayText" TextAlignment="GridTextAlignment.Right">
+
+                                        <FilterMenuTemplate>
+                                            @context.ListView
+                                        </FilterMenuTemplate>
+
+                                        <CellEditTemplate>
+                                            @{
+                                                var issue = context.EditModel as BLL.Models.CompanyRemain;
+                                            }
+                                            <DxComboBox Data="@_AdrRemainTypeList"
+                                                        Value="@issue.Code"
+                                                        ValueChanged="@((int tagidvalue) => OnCodeChanged(tagidvalue, issue))"
+                                                        ValueExpression="@(() => issue.Code)"
+                                                        TextFieldName="Name"
+                                                        ValueFieldName="ID"
+                                                        AllowUserInput="true"
+                                                        SizeMode="SizeMode.Small" />
+                                        </CellEditTemplate>
+
+                                        <CellDisplayTemplate>
+                                            @{
+                                                var issue = context.DataItem as BLL.Models.CompanyRemain;
+                                                if (issue != null)
+                                                {
+                                                    var selectedItem = _AdrRemainTypeList.FirstOrDefault(x => x.ID == issue.Code);
+                                                    <span>@selectedItem?.Name</span>
+                                                }
+                                                
+                                            }
+                                        </CellDisplayTemplate>
+                                    </DxGridDataColumn>
+
+
+                                    <DxGridDataColumn Caption="نام شرکت" FieldName="Name" Width="20%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <FilterRowCellTemplate>
+                                            <DxTextBox Text="@((string)context.FilterRowValue)" BindValueMode=BindValueMode.OnInput
+                                                       TextChanged="(string v) => context.FilterRowValue = v" />
+                                        </FilterRowCellTemplate>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="نوع" FieldName="Type" Width="20%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <FilterRowCellTemplate>
+                                            <DxTextBox Text="@((string)context.FilterRowValue)" BindValueMode=BindValueMode.OnInput
+                                                       TextChanged="(string v) => context.FilterRowValue = v" />
+                                        </FilterRowCellTemplate>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="پرداخت 1398" FieldName="P98" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" Visible="false">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="پرداخت 1399" FieldName="P99" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" Visible="false">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="پرداخت 1400" FieldName="P1400" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" Visible="false">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="پرداخت 1401" FieldName="P1401" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" Visible="false">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="پرداخت 1402" FieldName="P1402" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" Visible="false">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="پرداخت 1403" FieldName="P1403" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="پرداخت 1404" FieldName="P1404" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+                                    
+                                    <DxGridDataColumn Caption="پرداخت 1405" FieldName="P1405" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="بدهی 1401" FieldName="B1401" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" Visible="false">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="بدهی 1402" FieldName="B1402" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" Visible="false">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="بدهی 1403" FieldName="B1403" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="بدهی 1404" FieldName="B1404" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+                                    
+                                    <DxGridDataColumn Caption="بدهی 1405" FieldName="B1405" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="بدهی برآوردی" FieldName="BBaravordi" Width="13%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="false" NullText="0" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="بدهی کل" FieldName="Total"
+                                                      UnboundType="GridUnboundColumnType.Decimal"
+                                                      UnboundExpression="[BBaravordi] + [B1405] + [B1404] + [B1403] + [B1402] + [B1401]"
+                                                      Width="13%" />
+
+                                    @* <DxGridDataColumn Caption="بدهی کل" FieldName="BTotal" Width="14%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right"/> *@
+
+                                    <DxGridDataColumn Caption="تاریخ تغییر" FieldName="ActionDate" Width="8%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" Visible="false">
+                                        <EditSettings>
+                                            <DxSpinEditSettings ShowSpinButtons="false" ReadOnly="true" />
+                                        </EditSettings>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="توضیحات" FieldName="Note" Width="15%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <FilterRowCellTemplate>
+                                            <DxTextBox Text="@((string)context.FilterRowValue)" BindValueMode=BindValueMode.OnInput
+                                                       TextChanged="(string v) => context.FilterRowValue = v" />
+                                        </FilterRowCellTemplate>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="شبا" FieldName="IR" Width="15%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <FilterRowCellTemplate>
+                                            <DxTextBox Text="@((string)context.FilterRowValue)" BindValueMode=BindValueMode.OnInput
+                                                       TextChanged="(string v) => context.FilterRowValue = v" />
+                                        </FilterRowCellTemplate>
+                                    </DxGridDataColumn>
+
+                                    <DxGridDataColumn Caption="شناسه" FieldName="DepositID" Width="15%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right">
+                                        <FilterRowCellTemplate>
+                                            <DxTextBox Text="@((string)context.FilterRowValue)" BindValueMode=BindValueMode.OnInput
+                                                       TextChanged="(string v) => context.FilterRowValue = v" />
+                                        </FilterRowCellTemplate>
+                                    </DxGridDataColumn>
+
+                                </Columns>
+
+                                <TotalSummary>
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="B1401" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="B1402" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="B1403" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="B1404" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="B1405" />
+
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="BBaravordi" />
+
+                                    @* <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="BTotal"/> *@
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="Total" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="P98" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="P99" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="P1400" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="P1401" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="P1402" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="P1403" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="P1404" />
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="P1405" />
+
+                                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Count" FieldName="Name" />
+                                </TotalSummary>
+                            </DxGrid>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<DxPopup @bind-Visible="_DebtDistributionPopupVisible"
+         ShowHeader="false"
+         Width="90vw"
+         Height="80vh"
+         CssClass="debt-distribution-popup"
+         CloseOnOutsideClick="true"
+         ShowFooter="true">
+    <BodyContentTemplate>
+        <div id="debt-distribution-print-area" class="p-3 report-print-area" dir="rtl">
+            <div class="text-center border-bottom pb-3 mb-3">
+                <h5 class="fw-bold mb-2">توزیع بدهی های بیمارستان مسیح دانشوری به اشخاص حقیقی و حقوقی به تفکیک طبقه هزینه</h5>
+                <small class="text-muted">تاریخ و ساعت تهیه گزارش: @_DebtDistributionReportDate</small>
+            </div>
+
+            <DxGrid Data="@_DebtDistributionList"
+                    KeyFieldName="Rec"
+                    SizeMode="SizeMode.Small"
+                    CssClass="p-0 rtl debt-distribution-grid"
+                    AllowSort="true"
+                    PageSize="1000"
+                    PagerVisible="false"
+                    ShowFilterRow="false"
+                    ColumnCaptionAlignment="GridTextAlignment.Right"
+                    CustomizeSummaryDisplayText="DebtDistribution_CustomizeSummaryDisplayText">
+                <Columns>
+                    <DxGridDataColumn Caption="ردیف" FieldName="Rec" Width="7%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" />
+                    <DxGridDataColumn Caption="طبقه هزینه / فعالیت" FieldName="ActivityName" Width="38%" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" />
+                    <DxGridDataColumn Caption="بدهی" FieldName="Debt" Width="18%" DisplayFormat="N0" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" />
+                    <DxGridDataColumn Caption="تعهد برآوردی" FieldName="EstimatedCommitment" Width="18%" DisplayFormat="N0" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" />
+                    <DxGridDataColumn Caption="بدهی کل" FieldName="TotalDebt" Width="19%" DisplayFormat="N0" CaptionAlignment="GridTextAlignment.Right" TextAlignment="GridTextAlignment.Right" />
+                </Columns>
+                <TotalSummary>
+                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Count" FieldName="ActivityName" />
+                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="Debt" />
+                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="EstimatedCommitment" />
+                    <DxGridSummaryItem SummaryType="GridSummaryItemType.Sum" FieldName="TotalDebt" />
+                </TotalSummary>
+            </DxGrid>
+            <div class="report-description mt-3">مبالغ به ریال است.</div>
+        </div>
+    </BodyContentTemplate>
+    <FooterContentTemplate>
+        <DxButton Text="چاپ" IconCssClass="tb-icon tb-icon-print" RenderStyle="ButtonRenderStyle.Primary" Click="@PrintDebtDistributionReport" />
+        <DxButton Text="بستن" CssClass="ms-2" Click="@CloseDebtDistributionReport" />
+    </FooterContentTemplate>
+</DxPopup>
+
+<DxLoadingPanel @bind-Visible="PanelVisible"
+                IsContentBlocked="true"
+                ApplyBackgroundShading="true"
+                IndicatorAreaVisible="true"
+                Text="@LoadingPanelText"
+                PositionTarget="body"
+                TextAlignment="LoadingPanelTextAlignment.Left" />
+
+<Toast @ref="MyToast" />
+
+<script>
+    function openInNewTab(url) {
+        window.open(url, '_blank');
+    }
+
+    // تعداد رکورد هر صفحه با ارتفاع واقعی گرید هماهنگ می‌شود تا اسکرول داخلی ایجاد نشود.
+    window.companyRemainGrid = {
+        initialize: function (dotNetReference) {
+            const updatePageSize = () => {
+                const grid = document.querySelector('.company-remain-grid');
+                const gridHeight = grid ? grid.getBoundingClientRect().height : window.innerHeight - 185;
+                // ارتفاع Toolbar، Header، FilterRow و Pager تقریباً 155px و هر ردیف 32px است.
+                const pageSize = Math.max(5, Math.min(50, Math.floor((gridHeight - 155) / 32)));
+                dotNetReference.invokeMethodAsync('SetGridPageSize', pageSize);
+            };
+
+            updatePageSize();
+            window.addEventListener('resize', updatePageSize);
+        }
+    };
+
+    // فقط محتوای گزارش پاپ‌آپ در یک پنجره موقت چاپ می‌شود؛
+    // در نتیجه نسخه تکراری از صفحه اصلی یا لایه‌های پاپ‌آپ چاپ نخواهد شد.
+    function printDebtDistributionReport() {
+        const report = Array.from(document.querySelectorAll('#debt-distribution-print-area'))
+            .find(element => element.offsetParent !== null);
+        if (!report) return;
+
+        const printWindow = window.open('', '_blank', 'width=1200,height=800');
+        if (!printWindow) return;
+
+        const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+            .map(element => element.outerHTML)
+            .join('');
+
+        printWindow.document.open();
+        printWindow.document.write(`<!doctype html>
+            <html dir="rtl">
+            <head>
+                <meta charset="utf-8" />
+                <title>گزارش توزیع بدهی</title>
+                ${styles}
+                <style>
+                    @@page { size: A4 landscape; margin: 12mm; }
+                    body { background: #fff !important; margin: 0; font-family: Tahoma, Arial, sans-serif; }
+                    .report-print-area { width: 100%; padding: 0 !important; }
+                    .dxbl-grid-header-cell { background-color: #176b87 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                </style>
+            </head>
+            <body>${report.outerHTML}</body>
+            </html>`);
+        printWindow.document.close();
+        printWindow.onload = () => {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.onafterprint = () => printWindow.close();
+        };
+    }
+</script>
+
+
+<style>
+    .alt-item > td:not(.dxbl-grid-empty-cell),
+    .alt-item > td:not(.dxbl-grid-indent-cell) {
+        background-color: color-mix(in srgb, var(--bs-gray-300), transparent 50%);
+    }
+
+
+    .dxbl-grid-filter-row {
+        background-color:  sandybrown !important; /* رنگ دلخواه */
+    }
+
+    .debt-distribution-grid .dxbl-grid-header-cell {
+        background-color: #176b87;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .debt-distribution-grid .dxbl-grid-total-summary {
+        background-color: #e2f0f4;
+        font-weight: 700;
+    }
+
+    .report-description { color: #6c757d; font-size: .85rem; }
+
+    /* گرید اصلی همواره فضای باقیمانده از صفحه را می‌گیرد؛ Pager فعلی بدون تغییر باقی می‌ماند. */
+    .company-remain-grid {
+        height: calc(100vh - 185px) !important;
+        min-height: 420px;
+        max-height: calc(100vh - 185px) !important;
+    }
+
+
+
+
+</style>
