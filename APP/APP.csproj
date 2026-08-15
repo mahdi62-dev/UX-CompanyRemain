@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Stimulsoft.Base">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Blockly">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Blockly.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Data">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Drawing">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Map">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Map.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Report.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.Blazor">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Report.Blazor.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.Check">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Report.Check.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.Helper">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Report.Helper.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.Web">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Report.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.WebDesign">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Report.WebDesign.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.System">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.System.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.System.Web">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.System.Web.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

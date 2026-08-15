@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\APP\APP.csproj" />
+    <ProjectReference Include="..\DAL\DAL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Stimulsoft.Report">
+      <HintPath>D:\PRG\Stimulsoft.Reports.Ultimate-Designer.2023.1.1\Stimulsoft_Reports_2023.1.1_Downloadly.ir\Stimulsoft Reports 2023.1.1\Crack for Blazor\Stimulsoft.Report.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
